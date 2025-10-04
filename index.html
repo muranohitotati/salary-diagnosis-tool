@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>転職可能性診断ツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --background-color: #f7f9fc;
+            --text-color: #333;
+            --card-background: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            margin: auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        p.description {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #666;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: #555;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fdfdfd;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+        
+        select[multiple] {
+            height: 150px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-image: linear-gradient(to right, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        #result {
+            margin-top: 40px;
+            padding: 30px;
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            text-align: center;
+            border: 1px solid #eee;
+        }
+        
+        #result h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        #result p {
+            font-size: 18px;
+            margin: 15px 0;
+        }
+
+        #result #score, #result #possibility, #result #expected_salary {
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        #result #expected_salary {
+             font-size: 24px;
+        }
+
+        #result h3 {
+            margin-top: 30px;
+            color: #444;
+        }
+        
+        #result #advice {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>転職可能性診断ツール</h1>
+        <p class="description">いくつかの質問に答えるだけで、あなたの市場価値と転職可能性を診断します。</p>
+
+        <div class="question">
+            <label for="age">年齢</label>
+            <input type="number" id="age" placeholder="例: 30">
+        </div>
+
+        <div class="question">
+            <label for="current_salary">現在の年収（万円）</label>
+            <input type="number" id="current_salary" placeholder="例: 500">
+        </div>
+
+        <div class="question">
+            <label for="experience_years">社会人経験年数</label>
+            <input type="number" id="experience_years" placeholder="例: 8">
+        </div>
+
+        <div class="question">
+            <label for="job_changes">転職回数</label>
+            <input type="number" id="job_changes" placeholder="例: 2">
+        </div>
+
+        <div class="question">
+            <label for="industry">業種</label>
+            <select id="industry">
+                <option value="it">IT・通信</option>
+                <option value="manufacturing">メーカー</option>
+                <option value="finance">金融</option>
+                <option value="construction">建設・不動産</option>
+                <option value="medical">医療・福祉</option>
+                <option value="service">サービス</option>
+                <option value="other">その他</option>
+            </select>
+        </div>
+
+        <div class="question">
+            <label for="skills">保有スキル（複数選択可）</label>
+            <select id="skills" multiple>
+                <option value="programming">プログラミング</option>
+                <option value="management">マネジメント</option>
+                <option value="marketing">マーケティング</option>
+                <option value="sales">営業</option>
+                <option value="design">デザイン</option>
+            </select>
+        </div>
+
+        <button onclick="calculate()">診断する</button>
+
+        <div id="result" style="display:none;">
+            <h2>診断結果</h2>
+            <p>あなたの市場価値スコア: <span id="score"></span></p>
+            <p>転職成功可能性: <span id="possibility"></span></p>
+            <p>予想年収: <span id="expected_salary"></span>万円</p>
+            <h3>アドバイス</h3>
+            <p id="advice"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            try {
+                // 入力値の取得
+                const age = parseInt(document.getElementById('age').value);
+                const currentSalary = parseInt(document.getElementById('current_salary').value);
+                const experienceYears = parseInt(document.getElementById('experience_years').value);
+                const jobChanges = parseInt(document.getElementById('job_changes').value);
+                const industry = document.getElementById('industry').value;
+                const skills = Array.from(document.getElementById('skills').selectedOptions).map(option => option.value);
+
+                // 入力チェック
+                if (isNaN(age) || isNaN(currentSalary) || isNaN(experienceYears) || isNaN(jobChanges)) {
+                    alert('すべての項目に数値を入力してください。');
+                    return;
+                }
+
+                // デバッグ用にコンソールに出力
+                console.log('Age:', age);
+                console.log('Current Salary:', currentSalary);
+                console.log('Experience Years:', experienceYears);
+                console.log('Job Changes:', jobChanges);
+                console.log('Industry:', industry);
+                console.log('Skills:', skills);
+
+                // スコア計算
+                let score = 0;
+
+                // 年齢
+                if (age >= 25 && age <= 35) {
+                    score += 20;
+                } else if (age < 25 || (age > 35 && age <= 45)) {
+                    score += 10;
+                }
+
+                // 現在の年収
+                if (currentSalary >= 600) {
+                    score += 20;
+                } else if (currentSalary >= 400) {
+                    score += 10;
+                }
+
+                // 経験年数
+                if (experienceYears >= 5) {
+                    score += 20;
+                } else if (experienceYears >= 3) {
+                    score += 10;
+                }
+
+                // 転職回数
+                if (jobChanges <= 2) {
+                    score += 10;
+                }
+
+                // 業種
+                const industryScores = {
+                    'it': 20,
+                    'finance': 15,
+                    'manufacturing': 10,
+                    'medical': 10,
+                    'construction': 5,
+                    'service': 5,
+                    'other': 0
+                };
+                score += industryScores[industry] || 0;
+
+                // スキル
+                const skillScores = {
+                    'programming': 20,
+                    'management': 20,
+                    'marketing': 15,
+                    'sales': 10,
+                    'design': 10
+                };
+                skills.forEach(skill => {
+                    score += skillScores[skill] || 0;
+                });
+
+                console.log('Final Score:', score);
+
+                // 転職成功可能性
+                let possibility = '';
+                if (score >= 80) {
+                    possibility = '非常に高い';
+                } else if (score >= 60) {
+                    possibility = '高い';
+                } else if (score >= 40) {
+                    possibility = '普通';
+                } else {
+                    possibility = '低い';
+                }
+
+                // 予想年収
+                const expectedSalary = currentSalary * (1 + (score / 200));
+
+                // アドバイス
+                let advice = '';
+                if (score >= 80) {
+                    advice = '素晴らしい市場価値です！自信を持って転職活動を進めましょう。';
+                } else if (score >= 60) {
+                    advice = '高い市場価値を持っています。さらなるスキルアップで、より良い条件を目指せます。';
+                } else if (score >= 40) {
+                    advice = '平均的な市場価値です。経験やスキルを棚卸しし、アピールポイントを明確にしましょう。';
+                } else {
+                    advice = 'まずは現職で経験を積むか、専門スキルを身につけることをお勧めします。';
+                }
+
+                // 結果の表示
+                document.getElementById('score').textContent = score;
+                document.getElementById('possibility').textContent = possibility;
+                document.getElementById('expected_salary').textContent = expectedSalary.toFixed(0);
+                document.getElementById('advice').textContent = advice;
+                document.getElementById('result').style.display = 'block';
+            } catch (error) {
+                alert('エラーが発生しました: ' + error.message);
+            }
+        }
+    </script>
+
+</body>
+</html>
